@@ -1,17 +1,17 @@
-function [x, iter, p_estimate, errHist] = fixedPoint(g, x0, tol, maxiter)
+function [x, iter, p_estimate, errHist] = fixedPoint(g, p0, tol, maxiter)
 % fixedPoint - Fixed-point iteration for solving x = g(x)
 %
 % This function implements the fixed-point iteration method to find roots.
 % The method converts a root-finding problem f(x) = 0 into a fixed-point 
 % problem x = g(x) by rearranging the original equation.
 % Usage:
-%   [x, iter, errHist] = fixedPoint(g, x0)
-%   [x, iter, errHist] = fixedPoint(g, x0, tol)
-%   [x, iter, errHist] = fixedPoint(g, x0, tol, maxiter)
+%   [x, iter, errHist] = fixedPoint(g, p0)
+%   [x, iter, errHist] = fixedPoint(g, p0, tol)
+%   [x, iter, errHist] = fixedPoint(g, p0, tol, maxiter)
 % Inputs:
 %   g           - function handle representing the iteration function g(x)
 %                 Example: g = @(x) sqrt(10/(x+4)) for solving x^3+4x^2-10=0
-%   x0          - starting value (scalar) - initial guess for the fixed point
+%   p0          - starting value (scalar) - initial guess for the fixed point
 %   tol         - tolerance for stopping (default 1e-6)
 %                 Stopping criterion: |x_n - p_estimate| <= tol
 %   maxiter     - maximum number of iterations allowed (default 100)
@@ -37,7 +37,7 @@ function [x, iter, p_estimate, errHist] = fixedPoint(g, x0, tol, maxiter)
     % Since we don't know the true fixed point p, we run a few iterations
     % to get a reasonable estimate. This allows us to compute |p_n - p|
     
-    x_est = x0;  % Start estimation from the same initial point
+    x_est = p0;  % Start estimation from the same initial point
     
     % Run up to 10 iterations to estimate the fixed point location
     for i = 1:10
@@ -61,7 +61,7 @@ function [x, iter, p_estimate, errHist] = fixedPoint(g, x0, tol, maxiter)
     errHist = zeros(1, maxiter);
     
     % Initialize iteration: start from original initial guess
-    x_old = x0;
+    x_old = p0;
     
     % Main iteration loop: x_{n+1} = g(x_n)
     for iter = 1:maxiter

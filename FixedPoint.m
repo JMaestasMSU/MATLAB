@@ -1,16 +1,16 @@
 % Simple implementation of the fixed point root-finding method.
 
-function [x, iter, errHist] = FixedPoint(g, x0, tol, maxiter)
+function [root, iter, errHist] = FixedPoint(g, p0, tol, maxiter)
 % FixedPoint  Fixed-point iteration for solving x = g(x)
 %
 % Usage:
-%   [x, iter, errHist] = FixedPoint(g, x0)
-%   [x, iter, errHist] = FixedPoint(g, x0, tol)
-%   [x, iter, errHist] = FixedPoint(g, x0, tol, maxiter)
+%   [x, iter, errHist] = FixedPoint(g, p0)
+%   [x, iter, errHist] = FixedPoint(g, p0, tol)
+%   [x, iter, errHist] = FixedPoint(g, p0, tol, maxiter)
 %
 % Inputs:
 %   g        - function handle representing the iteration function g(x)
-%   x0       - starting value (scalar)
+%   p0       - starting value (scalar)
 %   tol      - tolerance for stopping (default 1e-6). Stopping criterion:
 %              |x_{n+1} - x_n| <= tol
 %   maxiter  - maximum number of iterations allowed (default 100)
@@ -40,22 +40,22 @@ function [x, iter, errHist] = FixedPoint(g, x0, tol, maxiter)
     errHist = zeros(1, maxiter);
 
     % Initialize
-    x_old = x0;
+    p = p0;
 
     % Main fixed-point iteration loop:
     for iter = 1:maxiter
         % Compute next iterate
-        x_new = g(x_old);
+        q = g(p);
 
         % Compute difference between successive iterates (simple convergence measure)
-        err = abs(x_new - x_old);
+        err = abs(q - p);
         errHist(iter) = err;
 
         % Check for invalid numbers (divergence / numerical blow-up)
         if isnan(err) || isinf(err)
             % Trim history and return with warning
             errHist = errHist(1:iter);
-            x = x_new;
+            root = q;
             warning('FixedPoint:NaNorInf', 'Iteration produced NaN or Inf at iter = %d', iter);
             return;
         end
@@ -64,16 +64,15 @@ function [x, iter, errHist] = FixedPoint(g, x0, tol, maxiter)
         if err <= tol
             % Trim error history to actual length
             errHist = errHist(1:iter);
-            x = x_new;
+            root = q;
             return;
         end
 
         % Prepare for next iteration
-        x_old = x_new;
+        p = q;
     end
 
     % If we reach here, maximum iterations were used without meeting tol
-    errHist = errHist(1:maxiter);
-    x = x_new;
+    root = q;
     warning('FixedPoint:NoConverge', 'Maximum iterations (%d) reached without meeting tolerance %g', maxiter, tol);
 end

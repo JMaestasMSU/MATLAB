@@ -1,0 +1,62 @@
+function [p, n] = Newt(p0, func, funcp, tol)
+    
+    n = 1;
+    f = feval(func, p0);
+    fp = feval(funcp, p0);
+    p = p0 - f./fp;
+
+    fprintf('p = %4.4f after %d iterations\n', p, n);
+
+    while abs(p - p0) > tol
+        p0 = p;
+        f = feval(func, p0);
+        fp = feval(funcp, p0);
+        p = p0 - f./fp;
+        n = n + 1;
+        fprintf('p = %4.4f after %d iterations\n', p, n);
+
+        if n > 10000
+            print('method appears to diverge')
+        end
+    end
+
+end
+
+function [p, n] = Secant(p0, p1, func, tol)
+    
+    n = 1;
+    f0 = feval(func, p0);
+    f1 = feval(func, p1);
+    fp = (f1 - f0)feval(funcp, p0);
+    p = p0 - f./fp;
+
+    fprintf('p = %4.4f after %d iterations\n', p, n);
+
+    while abs(p - p0) > tol
+        p0 = p;
+        f = feval(func, p0);
+        fp = feval(funcp, p0);
+        p = p0 - f./fp;
+        n = n + 1;
+        fprintf('p = %4.4f after %d iterations\n', p, n);
+
+        if n > 10000
+            print('method appears to diverge')
+        end
+    end
+
+end
+
+
+f = @(x) x.^3 - 2.*x.^2 - 5;
+fp = @(x) 3.*x.^4 - 4.*x;
+
+p0 = 2.5;                 % starting value p_0
+tol = 1e-2;             % Tolerance requested by the assignment (accuracy within 10^-2)
+
+try
+    [p, iters] = Newt(p0, f, fp, tol);
+catch E
+    fprintf('ERROR - %s\n', E.message);
+end
+
