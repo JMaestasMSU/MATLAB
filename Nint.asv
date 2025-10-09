@@ -1,0 +1,25 @@
+function [M, T, S, G] = Nint(a, b, f, n)
+    M = 0;
+    T = 0;
+    S = 0;
+    G = 0;
+
+    h = (b-a)/n;
+    x = a:h:b;
+
+    for i = 1:n
+
+        M = M + h.*feval(f, (x(i) + (x(i+1))./2));
+        T = T + h./2.*(feval(f, x(i))) + feval(f, (x(i+1)));
+
+        if mod(1, 2) == 1
+            if i == 1
+                S = S + h./3.*(feval(f, x(i)));
+            else 
+                S = S + 2*h./3.*(feval(f, x(i+1)));
+            end
+        else
+            S = S + 4*h./3.*(feval(f, x(i)));
+        end
+
+    end
